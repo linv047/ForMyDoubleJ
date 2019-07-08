@@ -110,12 +110,8 @@ public class runCode {
             try {
                 list = searchInfo(value);
             } catch (Exception e) {
-                FileOutputStream outputStream = new FileOutputStream(file);
-                wordBook.write(outputStream);
-                inputStream.close();
-                outputStream.close();
-                wordBook.close();
-                break;
+                System.out.println("something wrong, skip the row" + i);
+               continue;
             }
             if (list.size() == 2) {
                 fcell.setCellValue(list.get(0));
