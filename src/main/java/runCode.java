@@ -32,7 +32,7 @@ public class runCode {
 //        chromeOptions.addArguments("--headless");
         chromeOptions.addArguments("user-data-dir=" + System.getProperty("user.home") + "\\AppData\\Local\\Google\\Chrome\\User Data");
         driver = new ChromeDriver(chromeOptions);
-        wait = new WebDriverWait(driver, 20);
+        wait = new WebDriverWait(driver, 10);
 
 
     }
@@ -50,19 +50,18 @@ public class runCode {
 
         driver.get(url + "/search?key=" + name);
 
-        Thread.sleep(3500);
+        Thread.sleep(1500);
 
-        WebElement conpany ;
+        WebElement conpany;
         try {
-            conpany= wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//tbody[@id = 'search-result']/tr[1]//a")));
+            conpany = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//tbody[@id = 'search-result']/tr[1]//a")));
             Thread.sleep(1500);
         } catch (TimeoutException e) {
-            list.add("未找到匹配公司");
-            list.add("未找到匹配公司");
+            list.add("未找到该公司");
+            list.add("未找到该公司");
             return list;
         }
         if (!name.equalsIgnoreCase(conpany.getText())) {
-            System.out.println(name + "---" + "未找到完全匹配公司");
             list.add("未找到完全匹配公司");
             list.add("未找到完全匹配公司");
         } else {
@@ -74,7 +73,6 @@ public class runCode {
             }
             WebElement code = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//td[text()='统一社会信用代码']/following-sibling::td[1]")));
             WebElement boss = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class='boss-td']//a/h2")));
-            System.out.println(name + "--" + boss.getText() + "--" + code.getText());
             list.add(boss.getText());
             list.add(code.getText());
         }
@@ -104,6 +102,10 @@ public class runCode {
             //读取单元格
             XSSFCell cell = row.getCell(0);//获取单元格对象
             String value = cell.getStringCellValue();
+            if (value.equalsIgnoreCase("")) {
+                System.out.println("该行为空行，无数据");
+                continue;
+            }
             XSSFCell fcell = row.getCell(1);
             XSSFCell ccell = row.getCell(2);
             List<String> list = null;
@@ -111,11 +113,15 @@ public class runCode {
                 list = searchInfo(value);
             } catch (Exception e) {
                 System.out.println("something wrong, skip the row" + i);
-               continue;
+                continue;
             }
             if (list.size() == 2) {
                 fcell.setCellValue(list.get(0));
                 ccell.setCellValue(list.get(1));
+            }
+
+            if (!value.equalsIgnoreCase("")) {
+                System.out.println(value + " ----" + list.get(0) + "---" + list.get(1));
             }
 
         }
